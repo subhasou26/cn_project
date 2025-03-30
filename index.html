@@ -21,7 +21,7 @@
 
         function registerUser() {
             userId = document.getElementById("userId").value;
-            ws = new WebSocket("ws://localhost:3000");
+            ws = new WebSocket("ws://cn-project-beryl.vercel.app/");
 
             ws.onopen = () => {
                 ws.send(JSON.stringify({ type: "register", userId }));
