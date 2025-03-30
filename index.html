@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+</head>
+<body>
+    <h2>Chat Room</h2>
+    <input type="text" id="userId" placeholder="Enter your User ID">
+    <button onclick="registerUser()">Register</button>
+    <br><br>
+    <input type="text" id="toUserId" placeholder="Send to User ID">
+    <div id="messages"></div>
+    <input type="text" id="messageInput" placeholder="Type a message">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        let ws;
+        let userId;
+
+        function registerUser() {
+            userId = document.getElementById("userId").value;
+            ws = new WebSocket("ws://localhost:3000");
+
+            ws.onopen = () => {
+                ws.send(JSON.stringify({ type: "register", userId }));
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                const messageDiv = document.createElement("div");
+                messageDiv.textContent = `${data.from}: ${data.message}`;
+                document.getElementById("messages").appendChild(messageDiv);
+            };
+        }
+
+        function sendMessage() {
+            const toUserId = document.getElementById("toUserId").value;
+            const input = document.getElementById("messageInput");
+            ws.send(JSON.stringify({ type: "message", from: userId, to: toUserId, message: input.value }));
+            input.value = "";
+        }
+    </script>
+</body>
+</html>
